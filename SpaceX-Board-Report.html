@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SpaceX — Financial Review</title>
+<style>
+  :root{
+    --ink:#0b1020;
+    --ink-soft:#1a2138;
+    --panel:#ffffff;
+    --bg:#eef1f6;
+    --muted:#5b6275;
+    --line:#e2e6ee;
+    --accent:#0b5fff;
+    --accent-2:#00b2ff;
+    --space:#3b82f6;
+    --conn:#10b981;
+    --ai:#a855f7;
+    --pos:#11885a;
+    --neg:#c0392b;
+    --shadow:0 10px 30px rgba(16,24,48,.08), 0 2px 6px rgba(16,24,48,.05);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+  /* ---------- Cover ---------- */
+  .hero{
+    background:radial-gradient(1200px 500px at 80% -10%, #16306e 0%, transparent 55%),
+               radial-gradient(900px 500px at 0% 120%, #06112e 0%, transparent 60%),
+               linear-gradient(135deg,#070d1f 0%,#0b1733 55%,#0a1c44 100%);
+    color:#fff;position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(2px 2px at 20% 30%,rgba(255,255,255,.7),transparent),
+              radial-gradient(2px 2px at 70% 20%,rgba(255,255,255,.5),transparent),
+              radial-gradient(1.5px 1.5px at 40% 70%,rgba(255,255,255,.6),transparent),
+              radial-gradient(1.5px 1.5px at 85% 60%,rgba(255,255,255,.45),transparent),
+              radial-gradient(1px 1px at 55% 45%,rgba(255,255,255,.5),transparent);
+    opacity:.6;pointer-events:none;
+  }
+  .hero .wrap{position:relative;z-index:1;padding-top:54px;padding-bottom:48px}
+  .brand{display:flex;align-items:center;gap:12px;letter-spacing:.32em;font-weight:700;font-size:13px;text-transform:uppercase;color:#cfe0ff}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 14px var(--accent-2)}
+  h1.title{font-size:46px;line-height:1.05;margin:22px 0 10px;font-weight:800;letter-spacing:-.5px}
+  .subtitle{font-size:18px;color:#aec3e8;max-width:680px;margin:0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:26px;margin-top:30px;font-size:13px;color:#9fb4d9}
+  .meta-row b{color:#fff;font-weight:600;display:block;font-size:15px;margin-top:2px}
+  .confidential{margin-top:26px;display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7f95bd;border:1px solid rgba(255,255,255,.15);padding:6px 12px;border-radius:999px}
+
+  /* ---------- Sections ---------- */
+  section{padding:46px 0}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 6px}
+  h2{font-size:26px;margin:0 0 4px;font-weight:800;letter-spacing:-.3px}
+  .lead{color:var(--muted);margin:0 0 26px;font-size:15px;max-width:760px}
+
+  /* ---------- KPI cards ---------- */
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+  .kpi .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+  .kpi .value{font-size:30px;font-weight:800;margin:8px 0 2px;letter-spacing:-.5px}
+  .kpi .value.neg{color:var(--neg)}
+  .kpi .sub{font-size:12.5px;color:var(--muted)}
+  .kpi .chip{display:inline-block;margin-top:10px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .chip.up{background:#e6f6ee;color:var(--pos)}
+  .chip.flat{background:#eef1f6;color:var(--muted)}
+
+  .period-tag{display:inline-flex;align-items:center;gap:7px;background:#eaf1ff;color:var(--accent);font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px;margin-bottom:16px}
+
+  /* ---------- Two-column ---------- */
+  .cols{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:start}
+
+  /* ---------- Card / chart panel ---------- */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 2px;font-size:17px;font-weight:700}
+  .card .hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+
+  /* ---------- Bar chart (CSS) ---------- */
+  .chart{display:flex;align-items:flex-end;gap:26px;height:240px;padding-top:10px}
+  .bar-group{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:8px}
+  .bars{display:flex;align-items:flex-end;gap:7px;height:100%;width:100%;justify-content:center}
+  .bar{width:34px;border-radius:7px 7px 0 0;position:relative;transition:.3s;background:var(--accent)}
+  .bar:hover{filter:brightness(1.08)}
+  .bar .top{position:absolute;top:-21px;left:50%;transform:translateX(-50%);font-size:11.5px;font-weight:700;white-space:nowrap;color:var(--ink)}
+  .bar-label{font-size:12.5px;color:var(--muted);font-weight:600}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .swatch{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+  /* ---------- Segment cards ---------- */
+  .seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .seg{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .seg .bar-top{height:5px}
+  .seg .body{padding:22px}
+  .seg h3{margin:0;font-size:19px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .seg .tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .metric{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .metric:last-child{border-bottom:0}
+  .metric .m-label{font-size:13px;color:var(--muted)}
+  .metric .m-val{font-size:15px;font-weight:700}
+  .metric .m-val.neg{color:var(--neg)}
+  .metric .m-val small{font-weight:600;color:var(--muted);font-size:12px}
+  .seg-note{font-size:12px;color:var(--muted);margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  caption{caption-side:top;text-align:left;padding:18px 22px 6px;font-weight:700;font-size:16px}
+  .cap-sub{padding:0 22px 14px;color:var(--muted);font-size:12.5px}
+  thead th{background:#f6f8fc;color:var(--muted);font-weight:700;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;text-align:right;padding:11px 18px;border-bottom:2px solid var(--line)}
+  thead th:first-child{text-align:left}
+  tbody td{padding:10px 18px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  tbody td:first-child{text-align:left;color:var(--ink)}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr.indent td:first-child{padding-left:34px;color:var(--muted)}
+  tbody tr.subtotal td{font-weight:800;background:#f8fafd}
+  tbody tr.total td{font-weight:800;background:#eef3ff;border-top:2px solid var(--line)}
+  tbody tr:hover td{background:#fafbfe}
+  tbody tr.subtotal:hover td{background:#f1f5fb}
+  .neg{color:var(--neg)}
+  .colgroup-head th{background:#eef3ff;color:var(--ink);text-align:center;font-size:11px}
+
+  .two-tables{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+
+  /* ---------- Forward statement ---------- */
+  .forward{background:linear-gradient(135deg,#0b1733,#0a1c44);color:#fff;border-radius:18px;padding:34px 36px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+  .forward::before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(0,178,255,.35),transparent 70%)}
+  .forward h2{color:#fff}
+  .forward .eyebrow{color:var(--accent-2)}
+  .forward p{color:#bcd0f1;max-width:760px;font-size:15px;margin:0 0 14px;position:relative}
+  .forward .pill-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;position:relative}
+  .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:9px 14px;border-radius:12px;font-size:13px}
+  .pill b{color:#fff}
+
+  /* ---------- Footnotes ---------- */
+  .notes{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding:26px 0 60px}
+  .notes p{margin:0 0 9px}
+  .notes sup{color:var(--accent)}
+
+  footer.foot{background:var(--ink);color:#8fa3c6;font-size:12px;padding:22px 0;text-align:center}
+
+  /* ---------- Sticky mini-nav ---------- */
+  .nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;gap:6px;flex-wrap:wrap;padding:10px 28px}
+  .nav a{font-size:12.5px;color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:8px;font-weight:600}
+  .nav a:hover{background:#eef1f6;color:var(--ink)}
+  .print-btn{margin-left:auto;background:var(--accent);color:#fff;border:0;font-weight:700;font-size:12.5px;padding:8px 16px;border-radius:9px;cursor:pointer}
+  .print-btn:hover{background:#0a4fd6}
+
+  @media (max-width:880px){
+    .kpi-grid{grid-template-columns:repeat(2,1fr)}
+    .cols{grid-template-columns:1fr}
+    .seg-grid{grid-template-columns:1fr}
+    .two-tables{grid-template-columns:1fr}
+    h1.title{font-size:34px}
+    .table-wrap{overflow-x:auto}
+  }
+
+  @media print{
+    body{background:#fff}
+    .nav{display:none}
+    .hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section{padding:24px 0;break-inside:avoid}
+    .card,.seg,.kpi,.table-wrap,.forward{box-shadow:none;break-inside:avoid}
+    .kpi-grid,.seg-grid{break-inside:avoid}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<!-- ======== COVER ======== -->
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> Space Exploration Technologies Corp.</div>
+    <h1 class="title">Financial Review</h1>
+    <p class="subtitle">Consolidated and segment results for the quarter ended March&nbsp;31,&nbsp;2026, with full-year 2023&ndash;2025 trends.</p>
+    <div class="meta-row">
+      <div>Reporting period<b>Q1 2026 &amp; FY 2025</b></div>
+      <div>Prepared for<b>Board of Directors</b></div>
+      <div>Currency<b>USD, in millions</b></div>
+      <div>Date<b>June 6, 2026</b></div>
+    </div>
+    <span class="confidential">Confidential &middot; Board Use Only</span>
+  </div>
+</header>
+
+<!-- ======== NAV ======== -->
+<nav class="nav">
+  <div class="wrap">
+    <a href="#summary">Executive Summary</a>
+    <a href="#segments">Segments</a>
+    <a href="#revenue">Revenue</a>
+    <a href="#cash">Cash &amp; Capex</a>
+    <a href="#eps">Per-Share</a>
+    <a href="#forward">Outlook</a>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</nav>
+
+<!-- ======== EXECUTIVE SUMMARY ======== -->
+<section id="summary">
+  <div class="wrap">
+    <p class="eyebrow">Executive Summary</p>
+    <h2>Consolidated performance</h2>
+    <p class="lead">Results reflect the strength of our vertically integrated operating model and our ability to create and scale multiple new businesses. Space and Connectivity contributed the substantial majority of consolidated revenue, demonstrating the benefits of their scale and operating leverage.</p>
+
+    <div class="period-tag">● Three months ended March 31, 2026</div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Revenue</div>
+        <div class="value">$4,694M</div>
+        <div class="sub">Consolidated, Q1 2026</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Loss from Operations</div>
+        <div class="value neg">$(1,943)M</div>
+        <div class="sub">Driven by AI investment</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Adjusted EBITDA</div>
+        <div class="value">$1,127M</div>
+        <div class="sub">Non-GAAP<sup>1</sup></div>
+        <div class="chip up">Positive</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Operating Cash Flow</div>
+        <div class="value">$1,047M</div>
+        <div class="sub">vs. $727M in Q1 2025</div>
+        <div class="chip up">▲ 44%</div>
+      </div>
+    </div>
+
+    <div class="period-tag" style="margin-top:26px">● Year ended December 31, 2025</div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Revenue</div>
+        <div class="value">$18,674M</div>
+        <div class="sub">FY 2025</div>
+        <div class="chip up">▲ 33% YoY</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Loss from Operations</div>
+        <div class="value neg">$(2,589)M</div>
+        <div class="sub">Includes Starship &amp; AI R&amp;D</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Adjusted EBITDA</div>
+        <div class="value">$6,584M</div>
+        <div class="sub">Non-GAAP<sup>1</sup></div>
+        <div class="chip up">35% margin</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Operating Cash Flow</div>
+        <div class="value">$6,785M</div>
+        <div class="sub">vs. $5,776M in FY 2024</div>
+        <div class="chip up">▲ 17%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== REVENUE TREND ======== -->
+<section id="revenue" style="padding-top:8px">
+  <div class="wrap">
+    <p class="eyebrow">Revenue</p>
+    <h2>Top-line growth &amp; mix</h2>
+    <p class="lead">Total revenue has compounded from $10.4B in 2023 to $18.7B in 2025. Services &mdash; led by Starlink &mdash; now represent the overwhelming majority of revenue.</p>
+
+    <div class="cols">
+      <div class="card">
+        <h3>Total revenue by year</h3>
+        <p class="hint">USD millions, full-year</p>
+        <div class="chart">
+          <div class="bar-group">
+            <div class="bars"><div class="bar" style="height:55.6%;background:linear-gradient(180deg,#3b82f6,#1d4ed8)"><span class="top">$10,387</span></div></div>
+            <div class="bar-label">FY 2023</div>
+          </div>
+          <div class="bar-group">
+            <div class="bars"><div class="bar" style="height:75.0%;background:linear-gradient(180deg,#3b82f6,#1d4ed8)"><span class="top">$14,015</span></div></div>
+            <div class="bar-label">FY 2024</div>
+          </div>
+          <div class="bar-group">
+            <div class="bars"><div class="bar" style="height:100%;background:linear-gradient(180deg,#0b5fff,#0a3bd6)"><span class="top">$18,674</span></div></div>
+            <div class="bar-label">FY 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Products vs. services</h3>
+        <p class="hint">FY 2025, USD millions</p>
+        <div style="display:flex;flex-direction:column;gap:18px;margin-top:6px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>Services</span><span>$17,164</span></div>
+            <div style="background:#eef1f6;border-radius:8px;height:14px;margin-top:6px;overflow:hidden"><div style="width:91.9%;height:100%;background:linear-gradient(90deg,#0b5fff,#00b2ff);border-radius:8px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>Products</span><span>$1,510</span></div>
+            <div style="background:#eef1f6;border-radius:8px;height:14px;margin-top:6px;overflow:hidden"><div style="width:8.1%;height:100%;background:linear-gradient(90deg,#94a3b8,#cbd5e1);border-radius:8px"></div></div>
+          </div>
+        </div>
+        <p class="seg-note" style="margin-top:22px">Services comprise <b>92%</b> of FY 2025 revenue. All products revenue is attributable to the Connectivity segment.</p>
+      </div>
+    </div>
+
+    <!-- Revenue by type & segment table -->
+    <div class="table-wrap" style="margin-top:24px">
+      <table>
+        <caption>Revenue disaggregated by type &amp; segment</caption>
+        <div class="cap-sub">Year ended December 31 &middot; USD millions</div>
+        <thead>
+          <tr><th>Revenue stream</th><th>2025</th><th>2024</th><th>2023</th></tr>
+        </thead>
+        <tbody>
+          <tr class="indent"><td>Launch Services</td><td>2,576</td><td>2,584</td><td>1,964</td></tr>
+          <tr class="indent"><td>Launch &amp; Development</td><td>1,510</td><td>1,212</td><td>1,593</td></tr>
+          <tr class="subtotal"><td>Space</td><td>4,086</td><td>3,796</td><td>3,557</td></tr>
+          <tr class="indent"><td>Consumer</td><td>7,208</td><td>4,830</td><td>2,817</td></tr>
+          <tr class="indent"><td>Enterprise &amp; Government <sup>2</sup></td><td>4,179</td><td>2,769</td><td>1,052</td></tr>
+          <tr class="subtotal"><td>Connectivity</td><td>11,387</td><td>7,599</td><td>3,869</td></tr>
+          <tr class="indent"><td>Advertising</td><td>1,844</td><td>1,728</td><td>2,323</td></tr>
+          <tr class="indent"><td>AI Solutions &amp; Infrastructure</td><td>1,357</td><td>892</td><td>638</td></tr>
+          <tr class="subtotal"><td>AI</td><td>3,201</td><td>2,620</td><td>2,961</td></tr>
+          <tr class="total"><td>Total revenues</td><td>18,674</td><td>14,015</td><td>10,387</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ======== SEGMENTS ======== -->
+<section id="segments">
+  <div class="wrap">
+    <p class="eyebrow">Segment Performance</p>
+    <h2>Three operating segments</h2>
+    <p class="lead">Connectivity is the profit engine; Space funds the next-generation Starship platform; AI is in its earliest, investment-heavy stage. Figures below are for the three months ended March&nbsp;31,&nbsp;2026 unless noted.</p>
+
+    <div class="seg-grid">
+      <!-- SPACE -->
+      <div class="seg">
+        <div class="bar-top" style="background:var(--space)"></div>
+        <div class="body">
+          <h3><span style="color:var(--space)">●</span> Space</h3>
+          <div class="tag">Launch &amp; Starship</div>
+          <div style="margin-top:16px">
+            <div class="metric"><span class="m-label">Revenue</span><span class="m-val">$619 <small>/ FY $4,086</small></span></div>
+            <div class="metric"><span class="m-label">Loss from operations</span><span class="m-val neg">$(662) <small>/ FY $(657)</small></span></div>
+            <div class="metric"><span class="m-label">Segment Adj. EBITDA<sup>1</sup></span><span class="m-val neg">$(351) <small>/ FY $653</small></span></div>
+          </div>
+          <p class="seg-note">Funded <b>$930M</b> of Starship R&amp;D in Q1 2026 ($3,004M in FY 2025) &mdash; the key enabler of long-term growth through reusability, payload capacity and launch cadence.</p>
+        </div>
+      </div>
+
+      <!-- CONNECTIVITY -->
+      <div class="seg">
+        <div class="bar-top" style="background:var(--conn)"></div>
+        <div class="body">
+          <h3><span style="color:var(--conn)">●</span> Connectivity</h3>
+          <div class="tag">Starlink</div>
+          <div style="margin-top:16px">
+            <div class="metric"><span class="m-label">Revenue</span><span class="m-val">$3,257 <small>/ FY $11,387</small></span></div>
+            <div class="metric"><span class="m-label">Income from operations</span><span class="m-val">$1,188 <small>/ FY $4,423</small></span></div>
+            <div class="metric"><span class="m-label">Segment Adj. EBITDA<sup>1</sup></span><span class="m-val">$2,087 <small>/ FY $7,168</small></span></div>
+          </div>
+          <p class="seg-note">FY 2025 YoY growth: revenue <b>+49.8%</b>, operating income <b>+120.4%</b>, Adj. EBITDA <b>+86.2%</b> &mdash; on subscriber growth, enterprise adoption and network efficiency.</p>
+        </div>
+      </div>
+
+      <!-- AI -->
+      <div class="seg">
+        <div class="bar-top" style="background:var(--ai)"></div>
+        <div class="body">
+          <h3><span style="color:var(--ai)">●</span> AI</h3>
+          <div class="tag">Newly acquired segment</div>
+          <div style="margin-top:16px">
+            <div class="metric"><span class="m-label">Revenue</span><span class="m-val">$818 <small>/ FY $3,201</small></span></div>
+            <div class="metric"><span class="m-label">Loss from operations</span><span class="m-val neg">$(2,469) <small>/ FY $(6,355)</small></span></div>
+            <div class="metric"><span class="m-label">Segment Adj. EBITDA<sup>1</sup></span><span class="m-val neg">$(609) <small>/ FY $(1,237)</small></span></div>
+          </div>
+          <p class="seg-note">Earliest stage of development. We plan to prioritize growth and investment to capture significant opportunities in AI applications and compute infrastructure.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Segment revenue comparison chart -->
+    <div class="card" style="margin-top:24px">
+      <h3>Segment revenue trend</h3>
+      <p class="hint">USD millions, full-year 2023&ndash;2025</p>
+      <div class="chart">
+        <div class="bar-group">
+          <div class="bars">
+            <div class="bar" style="height:31.2%;background:var(--space)"><span class="top">3,557</span></div>
+            <div class="bar" style="height:34.0%;background:var(--space);opacity:.78"><span class="top">3,796</span></div>
+            <div class="bar" style="height:35.9%;background:var(--space);opacity:.6"><span class="top">4,086</span></div>
+          </div>
+          <div class="bar-label">Space</div>
+        </div>
+        <div class="bar-group">
+          <div class="bars">
+            <div class="bar" style="height:34.0%;background:var(--conn)"><span class="top">3,869</span></div>
+            <div class="bar" style="height:66.7%;background:var(--conn);opacity:.78"><span class="top">7,599</span></div>
+            <div class="bar" style="height:100%;background:var(--conn);opacity:.6"><span class="top">11,387</span></div>
+          </div>
+          <div class="bar-label">Connectivity</div>
+        </div>
+        <div class="bar-group">
+          <div class="bars">
+            <div class="bar" style="height:26.0%;background:var(--ai)"><span class="top">2,961</span></div>
+            <div class="bar" style="height:23.0%;background:var(--ai);opacity:.78"><span class="top">2,620</span></div>
+            <div class="bar" style="height:28.1%;background:var(--ai);opacity:.6"><span class="top">3,201</span></div>
+          </div>
+          <div class="bar-label">AI</div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--space)"></i>2023</span>
+        <span><i class="swatch" style="background:var(--space);opacity:.78"></i>2024</span>
+        <span><i class="swatch" style="background:var(--space);opacity:.6"></i>2025</span>
+        <span style="margin-left:auto">Bars grouped by segment; shade indicates year.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== CASH & CAPEX ======== -->
+<section id="cash">
+  <div class="wrap">
+    <p class="eyebrow">Liquidity &amp; Investment</p>
+    <h2>Cash flows &amp; capital expenditures</h2>
+    <p class="lead">Operating cash flow continues to grow, while investing activity &mdash; led by AI compute infrastructure &mdash; has stepped up materially, funded in part by financing inflows.</p>
+
+    <div class="two-tables">
+      <div class="table-wrap">
+        <table>
+          <caption>Statement of cash flows</caption>
+          <div class="cap-sub">USD millions &middot; Q1 unaudited</div>
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>Q1&nbsp;2026</th>
+              <th>Q1&nbsp;2025</th>
+              <th>FY&nbsp;2025</th>
+              <th>FY&nbsp;2024</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Operating</td><td>1,047</td><td>727</td><td>6,785</td><td>5,776</td></tr>
+            <tr><td>Investing</td><td class="neg">(16,724)</td><td class="neg">(4,170)</td><td class="neg">(19,575)</td><td class="neg">(10,796)</td></tr>
+            <tr><td>Financing</td><td>7,125</td><td>354</td><td>26,350</td><td>11,830</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Capital expenditures by segment</h3>
+        <p class="hint">FY 2025, USD millions &middot; total $20,737</p>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span><i class="swatch" style="background:var(--ai)"></i> AI</span><span>$12,727</span></div>
+            <div style="background:#eef1f6;border-radius:8px;height:13px;margin-top:6px;overflow:hidden"><div style="width:100%;height:100%;background:var(--ai);border-radius:8px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span><i class="swatch" style="background:var(--conn)"></i> Connectivity</span><span>$4,178</span></div>
+            <div style="background:#eef1f6;border-radius:8px;height:13px;margin-top:6px;overflow:hidden"><div style="width:32.8%;height:100%;background:var(--conn);border-radius:8px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span><i class="swatch" style="background:var(--space)"></i> Space</span><span>$3,832</span></div>
+            <div style="background:#eef1f6;border-radius:8px;height:13px;margin-top:6px;overflow:hidden"><div style="width:30.1%;height:100%;background:var(--space);border-radius:8px"></div></div>
+          </div>
+        </div>
+        <p class="seg-note" style="margin-top:20px">AI represents <b>61%</b> of FY 2025 capex ($7,723M in Q1 2026 alone), reflecting the build-out of compute infrastructure.</p>
+      </div>
+    </div>
+
+    <!-- Full capex table -->
+    <div class="table-wrap" style="margin-top:24px">
+      <table>
+        <caption>Capital expenditures by segment &mdash; detail</caption>
+        <div class="cap-sub">USD millions &middot; Q1 unaudited</div>
+        <thead>
+          <tr>
+            <th>Segment</th>
+            <th>Q1&nbsp;2026</th>
+            <th>Q1&nbsp;2025</th>
+            <th>FY&nbsp;2025</th>
+            <th>FY&nbsp;2024</th>
+            <th>FY&nbsp;2023</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Space</td><td>1,052</td><td>759</td><td>3,832</td><td>2,032</td><td>1,497</td></tr>
+          <tr><td>Connectivity</td><td>1,332</td><td>814</td><td>4,178</td><td>3,498</td><td>2,455</td></tr>
+          <tr><td>AI</td><td>7,723</td><td>2,567</td><td>12,727</td><td>5,633</td><td>463</td></tr>
+          <tr class="total"><td>Total capital expenditures</td><td>10,107</td><td>4,140</td><td>20,737</td><td>11,163</td><td>4,415</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ======== PER SHARE ======== -->
+<section id="eps">
+  <div class="wrap">
+    <p class="eyebrow">Per-Share Data</p>
+    <h2>Pro forma net loss per share</h2>
+    <p class="lead">Unaudited pro forma basic and diluted net loss per share attributable to common shareholders, giving effect to the Preferred Conversion, Class&nbsp;C Reclassification and the effectiveness of our charter.</p>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Pro forma net loss per share computation</caption>
+        <div class="cap-sub">USD millions, except per-share data</div>
+        <thead>
+          <tr><th>&nbsp;</th><th>Three months ended Mar&nbsp;31,&nbsp;2026</th><th>Year ended Dec&nbsp;31,&nbsp;2025</th></tr>
+        </thead>
+        <tbody>
+          <tr class="subtotal"><td>Numerator</td><td></td><td></td></tr>
+          <tr class="indent"><td>Net loss attributable to common shareholders</td><td class="neg">(4,947)</td><td class="neg">(4,937)</td></tr>
+          <tr class="indent"><td>Adj. to reverse deemed dividend on preferred</td><td>565</td><td>&mdash;</td></tr>
+          <tr class="indent"><td>Pro forma net loss attributable to common</td><td class="neg">(4,382)</td><td class="neg">(4,937)</td></tr>
+          <tr class="subtotal"><td>Denominator</td><td></td><td></td></tr>
+          <tr class="indent"><td>Weighted-avg shares, basic &amp; diluted</td><td>3,884</td><td>2,926</td></tr>
+          <tr class="indent"><td>Adj. to reflect Preferred Conversion</td><td>6,723</td><td>6,723</td></tr>
+          <tr class="indent"><td>Pro forma weighted-avg shares</td><td>10,607</td><td>9,649</td></tr>
+          <tr class="total"><td>Pro forma net loss per share <sup>3</sup></td><td class="neg">$(0.41)</td><td class="neg">$(0.51)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ======== FORWARD ======== -->
+<section id="forward">
+  <div class="wrap">
+    <div class="forward">
+      <p class="eyebrow">Why This Matters Now</p>
+      <h2>Orbital AI compute</h2>
+      <p>We are developing constellations &mdash; with potentially millions of satellites &mdash; for orbital data centers. We believe these AI compute satellites in Sun-synchronous orbit will be able to handle energy-intensive AI workloads, such as inference demand, at far greater scale and efficiency than terrestrial alternatives.</p>
+      <p>Starlink would provide low-latency, global connectivity linking these orbital AI systems to people around the world and delivering real-time intelligence. We expect to begin deploying our orbital AI compute satellites as early as <b style="color:#fff">2028</b>.</p>
+      <div class="pill-row">
+        <div class="pill">Target deployment&nbsp; <b>2028</b></div>
+        <div class="pill">Orbit&nbsp; <b>Sun-synchronous</b></div>
+        <div class="pill">Backbone&nbsp; <b>Starlink connectivity</b></div>
+        <div class="pill">Scale&nbsp; <b>Millions of satellites</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== NOTES ======== -->
+<div class="wrap">
+  <div class="notes">
+    <p><sup>1</sup> Adjusted EBITDA and Segment Adjusted EBITDA are non-GAAP measures. Refer to &ldquo;Management&rsquo;s Discussion and Analysis of Financial Condition and Results of Operations &mdash; Non-GAAP Financial Measures&rdquo; for additional information, including reconciliations of Segment Adjusted EBITDA to segment income (loss) from operations, the most directly comparable GAAP measure.</p>
+    <p><sup>2</sup> Enterprise &amp; Government revenue includes revenue from Starlink Mobile service offerings.</p>
+    <p><sup>3</sup> Pro forma per-share amounts give effect to (i) the Preferred Conversion as if it had occurred as of January 1, 2025, (ii) the Class C Reclassification as if it had occurred as of January 1, 2025, and (iii) the effectiveness of our charter, which will become effective upon completion of this offering.</p>
+    <p style="margin-top:14px;font-style:italic">This summary is prepared from disclosed financial data for board discussion purposes. Figures in USD millions unless otherwise noted; certain quarterly figures are unaudited.</p>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">Space Exploration Technologies Corp. &middot; Confidential &mdash; Board Use Only &middot; Prepared June 6, 2026</div>
+</footer>
+
+</body>
+</html>
